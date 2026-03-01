@@ -73,14 +73,15 @@ export async function computeMelSpectrogram(
     transpose: false, // Keep [n_mels, time] layout
   });
 
-  // spec is Float32Array in [n_mels, time] layout
-  const timeFrames = spec.length / N_MELS;
+  // spec is a Tensor with .data (Float32Array) and .dims ([n_mels, time])
+  const specData = spec.data as Float32Array;
+  const timeFrames = spec.dims[1];
 
   // 4. Log with guard: ln(mel + guard)
   // NeMo uses natural log with additive guard
-  const logged = new Float32Array(spec.length);
-  for (let i = 0; i < spec.length; i++) {
-    logged[i] = Math.log(spec[i] + LOG_GUARD);
+  const logged = new Float32Array(specData.length);
+  for (let i = 0; i < specData.length; i++) {
+    logged[i] = Math.log(specData[i] + LOG_GUARD);
   }
 
   // 5. Per-feature normalization (mean/std per mel bin across time)

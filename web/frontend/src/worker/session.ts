@@ -3,8 +3,7 @@ import * as ort from "onnxruntime-web/wasm";
 let session: ort.InferenceSession | null = null;
 
 export async function createSession(modelBuffer: ArrayBuffer): Promise<void> {
-  // Configure WASM paths — files are copied to public/ via postinstall
-  ort.env.wasm.wasmPaths = "/";
+  // Let onnxruntime-web resolve WASM files from its own location in node_modules
   ort.env.wasm.numThreads = navigator.hardwareConcurrency || 4;
   ort.env.wasm.simd = true;
 
